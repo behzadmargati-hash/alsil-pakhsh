@@ -7,53 +7,8 @@
 <title>الوین پخش</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Tahoma,Arial;background:#f2f5f7;color:#24323d}
-header{background:#075e54;color:white;padding:22px 15px;text-align:center}
-header h1{margin:0 0 8px;font-size:25px}
-header p{margin:0;font-size:12px}
-nav{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;padding:10px;background:white;position:sticky;top:0;z-index:5}
-nav button{padding:12px 3px;border:0;border-radius:8px;background:#e6eeee;color:#075e54;font-size:12px}
-nav button.active{background:#075e54;color:white}
-main{padding:12px;max-width:700px;margin:auto}
-.page{display:none}
-.page.active{display:block}
-.card{background:white;padding:15px;margin-bottom:12px;border-radius:12px;box-shadow:0 2px 8px #0000000a}
-h2{font-size:17px;margin-top:0;color:#075e54}
-h3{font-size:14px}
-label{display:block;font-size:12px;margin:12px 0 5px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #ccd5d9;border-radius:8px;background:white;font:14px Tahoma}
-button{cursor:pointer}
-.primary{width:100%;border:0;border-radius:8px;background:#087e70;color:white;padding:13px;margin-top:14px;font:14px Tahoma}
-.danger{background:#b42318;color:white;border:0;border-radius:6px;padding:7px;font:12px Tahoma}
-.small{font-size:11px;color:#718096}
-.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
-.stat{padding:14px;border-radius:10px;background:#e4f4ef}
-.stat span{font-size:12px;display:block;margin-bottom:8px}
-.stat b{font-size:17px;overflow-wrap:anywhere}
-.row{border-bottom:1px solid #edf0f2;padding:12px 0;font-size:13px}
-.row:last-child{border:0}
-.row b{display:block;margin-bottom:6px}
-.tag{display:inline-block;padding:4px 7px;border-radius:5px;background:#fff0c2;font-size:11px}
-.empty{text-align:center;color:#89939b;padding:20px;font-size:13px}
-footer{text-align:center;padding:20px;color:#8a969d;font-size:11px}
-</style>
-</head>
-<body>
-<header>
-<h1>الوین پخش</h1>
-<p>مدیریت فروش، مشتریان و حسابداری پخش</p>
-</header>
-
-<nav>
-<button class="active" data-page="home">داشبورد</button>
-<button data-page="customers">مشتریان</button>
-<button data-page="products">کالاها</button>
-<button data-page="sales">ثبت فروش</button>
-<button data-page="debts">بدهی‌ها</button>
-<button data-page="reports">گزارش‌ها</button>
-</nav>
-
-<main>
-<section id="home" class="page active">
-<div class="card">
-<h2>خوش آمدی 👋
+body{margin:0;font-family:Tahoma,Arial;background:#f1f5f4;color:#222}
+header{background:#075e54;color:white;padding:18px;text-align:center}
+nav{display:flex;flex-wrap:wrap;background:#fff;padding:8px;gap:6px;justify-content:center;position:sticky;top:0;z-index:2}
+button{border:0;border-radius:8px;padding:12px;background:#087f70;color:white;font-family:inherit;cursor:pointer}
+nav button{background:#e2
