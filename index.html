@@ -3,12 +3,325 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#075e54">
+<meta name="theme-color" content="#14532d">
 <title>الوین پخش</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Tahoma,Arial;background:#f1f5f4;color:#222}
-header{background:#075e54;color:white;padding:18px;text-align:center}
-nav{display:flex;flex-wrap:wrap;background:#fff;padding:8px;gap:6px;justify-content:center;position:sticky;top:0;z-index:2}
-button{border:0;border-radius:8px;padding:12px;background:#087f70;color:white;font-family:inherit;cursor:pointer}
-nav button{background:#e2
+body{margin:0;background:#f1f5f2;color:#17251c;font-family:Tahoma,Arial,sans-serif}
+header{background:#14532d;color:white;padding:20px 15px;text-align:center}
+header h1{margin:0 0 8px}
+header p{margin:0;font-size:13px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;padding:10px;background:white;position:sticky;top:0;z-index:2}
+button{border:0;border-radius:9px;padding:12px 8px;font-family:inherit;font-size:13px;cursor:pointer}
+nav button{background:#e5eee7;color:#14532d}
+nav button.active,.primary{background:#14532d;color:white}
+main{padding:12px;max-width:650px;margin:auto}
+.panel{background:white;border-radius:12px;padding:15px;margin-bottom:12px;box-shadow:0 2px 8px #00000008}
+h2{font-size:17px;margin:0 0 14px}
+h3{font-size:14px}
+label{display:block;font-size:13px;margin:12px 0 5px}
+input,select{width:100%;padding:12px;border:1px solid #d5ddd7;border-radius:8px;font-family:inherit;font-size:14px;background:white}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button.full{width:100%;margin-top:14px}
+.stat{background:#e5f3e8;padding:14px;border-radius:10px;margin:7px 0}
+.stat b{display:block;font-size:20px;margin-top:7px}
+.item{border:1px solid #e1e8e2;border-radius:9px;padding:12px;margin:8px 0;overflow-wrap:anywhere}
+.item button{margin:5px 0 0 5px;background:#eee}
+.small{font-size:12px;color:#647067;line-height:1.9}
+.empty{color:#777;text-align:center;padding:20px}
+.danger{background:#fee2e2;color:#991b1b}
+.green{color:#166534}
+footer{text-align:center;padding:20px;color:#66756a;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>الوین پخش</h1>
+<p>مدیریت فروش، کالا و حساب مشتریان</p>
+</header>
+
+<nav id="nav">
+<button class="active" data-page="home">🏠 خانه</button>
+<button data-page="products">📦 کالاها</button>
+<button data-page="customers">👥 مشتریان</button>
+<button data-page="sales">🧾 فروش</button>
+<button data-page="payments">💵 دریافت پول</button>
+<button data-page="reports">📊 گزارش‌ها</button>
+</nav>
+
+<main>
+<section id="home" class="page">
+<div class="panel">
+<h2>خلاصه وضعیت پخش</h2>
+<div class="stat">تعداد کالاها<b id="sProducts">۰</b></div>
+<div class="stat">تعداد مشتریان<b id="sCustomers">۰</b></div>
+<div class="stat">مجموع فروش<b id="sSales">۰ تومان</b></div>
+<div class="stat">مطالبات از مشتریان<b id="sDebt">۰ تومان</b></div>
+<div class="stat">سود ثبت‌شده فروش‌ها<b id="sProfit">۰ تومان</b></div>
+<p class="small">اطلاعات این نسخه در حافظه همین مرورگر ذخیره می‌شود. پاک کردن داده‌های مرورگر ممکن است اطلاعات را حذف کند؛ مرتب نسخه پشتیبان بگیر.</p>
+</div>
+</section>
+
+<section id="products" class="page" hidden>
+<div class="panel">
+<h2>ثبت کالای جدید</h2>
+<form id="productForm">
+<label>نام کالا</label><input id="pName" required placeholder="مثلاً مایع ظرفشویی">
+<div class="row">
+<div><label>قیمت خرید (تومان)</label><input id="pBuy" type="number" min="0" required></div>
+<div><label>قیمت فروش (تومان)</label><input id="pSell" type="number" min="0" required></div>
+</div>
+<label>موجودی اولیه</label><input id="pQty" type="number" min="0" required>
+<button class="primary full">ذخیره کالا</button>
+</form>
+</div>
+<div class="panel"><h2>فهرست کالاها</h2><div id="productList"></div></div>
+</section>
+
+<section id="customers" class="page" hidden>
+<div class="panel">
+<h2>ثبت مشتری</h2>
+<form id="customerForm">
+<label>نام مشتری یا فروشگاه</label><input id="cName" required>
+<label>شماره تماس</label><input id="cPhone" inputmode="tel">
+<label>توضیحات</label><input id="cNote" placeholder="آدرس یا توضیحات">
+<button class="primary full">ثبت مشتری</button>
+</form>
+</div>
+<div class="panel"><h2>فهرست مشتریان و مانده حساب</h2><div id="customerList"></div></div>
+</section>
+
+<section id="sales" class="page" hidden>
+<div class="panel">
+<h2>ثبت فروش</h2>
+<form id="saleForm">
+<label>مشتری</label><select id="saleCustomer" required></select>
+<label>کالا</label><select id="saleProduct" required></select>
+<div class="row">
+<div><label>تعداد</label><input id="saleQty" type="number" min="1" value="1" required></div>
+<div><label>قیمت هر واحد (تومان)</label><input id="salePrice" type="number" min="0" required></div>
+</div>
+<label>مبلغ دریافتی همین فروش (تومان)</label><input id="salePaid" type="number" min="0" value="0" required>
+<p class="small">اگر تمام مبلغ را گرفته‌ای، مبلغ دریافتی را برابر مبلغ کل وارد کن. در فروش نسیه، مبلغ دریافتی را صفر یا مبلغ پیش‌پرداخت بگذار.</p>
+<button class="primary full">ثبت فروش و به‌روزرسانی موجودی</button>
+</form>
+</div>
+<div class="panel"><h2>آخرین فروش‌ها</h2><div id="saleList"></div></div>
+</section>
+
+<section id="payments" class="page" hidden>
+<div class="panel">
+<h2>ثبت دریافت پول از مشتری</h2>
+<form id="paymentForm">
+<label>مشتری</label><select id="payCustomer" required></select>
+<label>مبلغ دریافتی (تومان)</label><input id="payAmount" type="number" min="1" required>
+<label>توضیحات</label><input id="payNote" placeholder="مثلاً تسویه بخشی از بدهی">
+<button class="primary full">ثبت دریافت</button>
+</form>
+</div>
+<div class="panel"><h2>سوابق دریافت پول</h2><div id="paymentList"></div></div>
+</section>
+
+<section id="reports" class="page" hidden>
+<div class="panel">
+<h2>گزارش‌های مالی</h2>
+<div class="stat">مجموع فروش<b id="rSales">۰</b></div>
+<div class="stat">مجموع دریافت‌ها<b id="rPaid">۰</b></div>
+<div class="stat">مانده مطالبات<b id="rDebt">۰</b></div>
+<div class="stat">سود ناخالص فروش‌های ثبت‌شده<b id="rProfit">۰</b></div>
+<p class="small">سود ناخالص بر اساس قیمت خرید ثبت‌شده کالا در زمان ثبت فروش محاسبه می‌شود. هزینه‌های جانبی در این نسخه محاسبه نشده‌اند.</p>
+<button id="exportBtn" class="primary full" type="button">خروجی پشتیبان اطلاعات (JSON)</button>
+<label for="importFile">بازیابی اطلاعات از فایل پشتیبان</label>
+<input id="importFile" type="file" accept=".json,application/json">
+<button id="resetBtn" class="danger full" type="button">حذف همه اطلاعات</button>
+</div>
+</section>
+</main>
+<footer>الوین پخش | نسخه اولیه مدیریت فروش</footer>
+
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const fmt=n=>Math.round(Number(n)||0).toLocaleString("fa-IR")+" تومان";
+const num=id=>Number($(id).value)||0;
+const today=()=>new Date().toLocaleString("fa-IR");
+const blank=()=>({products:[],customers:[],sales:[],payments:[]});
+let db=blank();
+
+try{
+const saved=localStorage.getItem("alvinPakhshDB");
+if(saved){
+const parsed=JSON.parse(saved);
+db={...blank(),...parsed};
+}
+}catch(e){alert("خواندن اطلاعات قبلی ناموفق بود؛ اطلاعات جدید تا ذخیره شدن در دسترس نیست.");}
+
+function save(){
+try{
+localStorage.setItem("alvinPakhshDB",JSON.stringify(db));
+return true;
+}catch(e){
+alert("ذخیره‌سازی انجام نشد. فضای گوشی یا مرورگر را بررسی کن و از اطلاعات پشتیبان بگیر.");
+return false;
+}
+}
+function esc(s){
+return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function debt(cId){
+const sales=db.sales.filter(s=>s.customerId===cId).reduce((a,s)=>a+s.total-s.paid,0);
+const payments=db.payments.filter(p=>p.customerId===cId).reduce((a,p)=>a+p.amount,0);
+return Math.max(0,sales-payments);
+}
+function totalSales(){return db.sales.reduce((a,s)=>a+s.total,0);}
+function totalPaid(){return db.sales.reduce((a,s)=>a+s.paid,0)+db.payments.reduce((a,p)=>a+p.amount,0);}
+function totalDebt(){return db.customers.reduce((a,c)=>a+debt(c.id),0);}
+function totalProfit(){return db.sales.reduce((a,s)=>a+(s.price-s.buyPrice)*s.qty,0);}
+function options(list,placeholder){
+return '<option value="">'+placeholder+'</option>'+list.map(x=>'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>').join("");
+}
+function render(){
+$("sProducts").textContent=db.products.length.toLocaleString("fa-IR");
+$("sCustomers").textContent=db.customers.length.toLocaleString("fa-IR");
+$("sSales").textContent=fmt(totalSales());
+$("sDebt").textContent=fmt(totalDebt());
+$("sProfit").textContent=fmt(totalProfit());
+
+$("productList").innerHTML=db.products.length?db.products.map(p=>`
+<div class="item"><b>${esc(p.name)}</b><br>
+<span class="small">خرید: ${fmt(p.buy)} | فروش: ${fmt(p.sell)}<br>موجودی: ${Number(p.qty).toLocaleString("fa-IR")}</span><br>
+<button data-edit-product="${p.id}">ویرایش</button>
+<button class="danger" data-delete-product="${p.id}">حذف</button></div>`).join(""):'<p class="empty">هنوز کالایی ثبت نشده است.</p>';
+
+$("customerList").innerHTML=db.customers.length?db.customers.map(c=>`
+<div class="item"><b>${esc(c.name)}</b><br><span class="small">تماس: ${esc(c.phone||"—")}<br>توضیحات: ${esc(c.note||"—")}<br>مانده بدهی: <b>${fmt(debt(c.id))}</b></span><br>
+<button data-edit-customer="${c.id}">ویرایش</button>
+<button class="danger" data-delete-customer="${c.id}">حذف</button></div>`).join(""):'<p class="empty">هنوز مشتری ثبت نشده است.</p>';
+
+$("saleCustomer").innerHTML=options(db.customers,"انتخاب مشتری");
+$("payCustomer").innerHTML=options(db.customers,"انتخاب مشتری");
+$("saleProduct").innerHTML=options(db.products,"انتخاب کالا");
+
+$("saleList").innerHTML=db.sales.length?[...db.sales].reverse().slice(0,50).map(s=>{
+const c=db.customers.find(x=>x.id===s.customerId);
+return `<div class="item"><b>${esc(c?.name||"مشتری حذف‌شده")}</b><br>${esc(s.name)} × ${s.qty}<br><span class="small">${esc(s.date)}<br>کل: ${fmt(s.total)} | پرداخت: ${fmt(s.paid)} | بدهی اولیه: ${fmt(s.total-s.paid)}</span></div>`;
+}).join(""):'<p class="empty">فروشی ثبت نشده است.</p>';
+
+$("paymentList").innerHTML=db.payments.length?[...db.payments].reverse().map(p=>{
+const c=db.customers.find(x=>x.id===p.customerId);
+return `<div class="item">${esc(c?.name||"مشتری حذف‌شده")} — <b>${fmt(p.amount)}</b><br><span class="small">${esc(p.date)} ${esc(p.note||"")}</span></div>`;
+}).join(""):'<p class="empty">دریافتی ثبت نشده است.</p>';
+
+$("rSales").textContent=fmt(totalSales());
+$("rPaid").textContent=fmt(totalPaid());
+$("rDebt").textContent=fmt(totalDebt());
+$("rProfit").textContent=fmt(totalProfit());
+}
+$("nav").addEventListener("click",e=>{
+const b=e.target.closest("button[data-page]");
+if(!b)return;
+document.querySelectorAll(".page").forEach(p=>p.hidden=p.id!==b.dataset.page);
+document.querySelectorAll("#nav button").forEach(x=>x.classList.toggle("active",x===b));
+});
+$("productForm").addEventListener("submit",e=>{
+e.preventDefault();
+const name=$("pName").value.trim(),buy=num("pBuy"),sell=num("pSell"),qty=num("pQty");
+if(!name)return;
+db.products.push({id:id(),name,buy,sell,qty});
+save();e.target.reset();render();alert("کالا ثبت شد.");
+});
+$("customerForm").addEventListener("submit",e=>{
+e.preventDefault();
+db.customers.push({id:id(),name:$("cName").value.trim(),phone:$("cPhone").value.trim(),note:$("cNote").value.trim()});
+save();e.target.reset();render();alert("مشتری ثبت شد.");
+});
+$("saleProduct").addEventListener("change",()=>{
+const p=db.products.find(x=>x.id===$("saleProduct").value);
+if(p)$("salePrice").value=p.sell;
+});
+$("saleForm").addEventListener("submit",e=>{
+e.preventDefault();
+const c=db.customers.find(x=>x.id===$("saleCustomer").value);
+const p=db.products.find(x=>x.id===$("saleProduct").value);
+const qty=num("saleQty"),price=num("salePrice"),paid=num("salePaid");
+if(!c||!p)return alert("مشتری و کالا را انتخاب کن.");
+if(qty<1||qty>p.qty)return alert("موجودی کالا کافی نیست.");
+const total=qty*price;
+if(paid>total)return alert("مبلغ دریافتی نمی‌تواند از مبلغ فروش بیشتر باشد.");
+db.sales.push({id:id(),customerId:c.id,productId:p.id,name:p.name,qty,price,buyPrice:p.buy,total,paid,date:today()});
+p.qty-=qty;
+save();e.target.reset();$("saleQty").value=1;render();alert("فروش ثبت شد و موجودی به‌روزرسانی شد.");
+});
+$("paymentForm").addEventListener("submit",e=>{
+e.preventDefault();
+const c=db.customers.find(x=>x.id===$("payCustomer").value),amount=num("payAmount");
+if(!c||amount<=0)return alert("مشتری و مبلغ معتبر وارد کن.");
+if(amount>debt(c.id))return alert("مبلغ دریافت بیشتر از بدهی ثبت‌شده این مشتری است.");
+db.payments.push({id:id(),customerId:c.id,amount,note:$("payNote").value.trim(),date:today()});
+save();e.target.reset();render();alert("دریافت ثبت شد.");
+});
+$("productList").addEventListener("click",e=>{
+const del=e.target.closest("[data-delete-product]");
+const edit=e.target.closest("[data-edit-product]");
+if(del){
+if(!confirm("این کالا حذف شود؟"))return;
+db.products=db.products.filter(p=>p.id!==del.dataset.deleteProduct);
+save();render();
+}
+if(edit){
+const p=db.products.find(p=>p.id===edit.dataset.editProduct);if(!p)return;
+const name=prompt("نام کالا:",p.name);if(name===null)return;
+const buy=prompt("قیمت خرید:",p.buy);if(buy===null)return;
+const sell=prompt("قیمت فروش:",p.sell);if(sell===null)return;
+const qty=prompt("موجودی فعلی:",p.qty);if(qty===null)return;
+if(!name.trim()||![buy,sell,qty].every(v=>v.trim()!==""&&Number(v)>=0))return alert("مقادیر معتبر وارد کن.");
+Object.assign(p,{name:name.trim(),buy:Number(buy),sell:Number(sell),qty:Number(qty)});
+save();render();
+}
+});
+$("customerList").addEventListener("click",e=>{
+const del=e.target.closest("[data-delete-customer]");
+const edit=e.target.closest("[data-edit-customer]");
+if(del){
+const cid=del.dataset.deleteCustomer;
+if(db.sales.some(s=>s.customerId===cid)||db.payments.some(p=>p.customerId===cid))return alert("این مشتری سابقه مالی دارد و برای حفظ سوابق حذف نمی‌شود.");
+if(!confirm("مشتری حذف شود؟"))return;
+db.customers=db.customers.filter(c=>c.id!==cid);save();render();
+}
+if(edit){
+const c=db.customers.find(c=>c.id===edit.dataset.editCustomer);if(!c)return;
+const name=prompt("نام مشتری:",c.name);if(name===null)return;
+const phone=prompt("شماره تماس:",c.phone||"");if(phone===null)return;
+const note=prompt("توضیحات:",c.note||"");if(note===null)return;
+if(!name.trim())return alert("نام مشتری خالی نباشد.");
+Object.assign(c,{name:name.trim(),phone,note});save();render();
+}
+});
+$("exportBtn").addEventListener("click",()=>{
+const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download="alvin-pakhsh-backup.json";a.click();
+setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+$("importFile").addEventListener("change",async e=>{
+const f=e.target.files[0];if(!f)return;
+try{
+const d=JSON.parse(await f.text());
+if(!d||!Array.isArray(d.products)||!Array.isArray(d.customers)||!Array.isArray(d.sales)||!Array.isArray(d.payments))throw Error();
+if(!confirm("اطلاعات فعلی با اطلاعات فایل جایگزین شود؟ ابتدا از اطلاعات فعلی پشتیبان بگیر."))return;
+db=d;save();render();alert("بازیابی انجام شد.");
+}catch(err){alert("فایل پشتیبان معتبر نیست.");}
+finally{e.target.value="";}
+});
+$("resetBtn").addEventListener("click",()=>{
+if(!confirm("همه کالاها، مشتریان و سوابق مالی برای همیشه از این مرورگر حذف شوند؟"))return;
+if(!confirm("مطمئنی؟ قبل از ادامه از اطلاعات پشتیبان بگیر."))return;
+db=blank();save();render();
+});
+render();
+})();
+</script>
+</body>
+</html>
